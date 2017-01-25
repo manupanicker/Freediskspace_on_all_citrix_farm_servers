@@ -11,6 +11,7 @@ $job=ICM -AsJob -ComputerName $fqdn -ScriptBlock{Get-WmiObject -class win32_logi
 @{Label="Total Free Space(in GB)";Expression={$_.freespace / 1gb -as [int] }}
 }
 
+#Optional code for progress bar
 $getjob=Get-Job -id $job.Id
 $jobstate =$getjob.State
 
@@ -21,7 +22,7 @@ $getjob=Get-Job -id $job.Id
 $jobstate =$getjob.State
 }
 }
-<#$jobs = get-job | ? { $_.state -eq "running" }
+$jobs = get-job | ? { $_.state -eq "running" }
 $total = $jobs.count
 $runningjobs = $jobs.count
 
@@ -33,12 +34,8 @@ write-progress -activity "Starting Provisioning Modules Instances" -status "Prog
 
 # After updating the progress bar, get current job count
 $runningjobs = (get-job | ? { $_.state -eq "running" }).Count
-}#>
-
-<#
-$jobid=$job.id
-Wait-Job -Id $jobid#>
-
+}
+#Optional code for progress bar end
 $receivejob=receive-job -id $job.Id | sort PSComputerName| select PSComputerName,deviceid,"Total Space(in GB)","Total Free Space(in GB)"
 $receivejob | ft PSComputerName,deviceid,"Total Space(in GB)","Total Free Space(in GB)" -AutoSize
 Read-Host "Enter Cntrl C to exit"
